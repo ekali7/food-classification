@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Classification with Deep Learning</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        section {
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: #f1f1f1;
+            margin-top: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Food Classification with Deep Learning</h1>
+        <p>Exploring Custom Architectures, Transfer Learning, and Conditional GANs</p>
+    </header>
+    <section class="container">
+        <h2>Project Overview</h2>
+        <p>The goal of this project is to classify food images from the Food-101 dataset by experimenting with various deep learning techniques. It explores the use of a custom convolutional neural network (CNN), transfer learning with DenseNet121, and data augmentation using a Conditional GAN (cGAN).</p>
+        <p>This project evaluates how well each method performs and examines the potential of synthetic data in improving classification accuracy.</p>
+
+        <h2>Dataset Details</h2>
+        <p>The Food-101 dataset contains 101 classes of food, each with 1,000 images, totaling 101,000 images. The images are divided into:</p>
+        <ul>
+            <li><strong>Training set:</strong> 750 images per class (75% of the dataset).</li>
+            <li><strong>Testing set:</strong> 250 images per class (25% of the dataset).</li>
+        </ul>
+        <p>These images vary in quality, orientation, and size, reflecting real-world challenges in image classification tasks.</p>
+        <img src="results/dataset_samples.png" alt="Sample Food-101 Images">
+        <img src="results/dataset_class_distribution.png" alt="Food-101 Class Distribution">
+
+        <h2>Model Architectures and Methods</h2>
+        
+        <h3>Custom CNN</h3>
+        <p>The custom CNN was built from scratch and served as the baseline for this project. Its architecture consists of:</p>
+        <ul>
+            <li><strong>Convolutional Layers:</strong> Five layers with filters ranging from 64 to 1024 to progressively capture more complex features.</li>
+            <li><strong>Pooling Layers:</strong> Max-pooling after each convolution reduces the spatial dimensions while retaining important features.</li>
+            <li><strong>Batch Normalization:</strong> Stabilizes training by normalizing activations.</li>
+            <li><strong>Fully Connected Layers:</strong> Two dense layers with ReLU activations, and the final layer produces predictions for 101 classes.</li>
+        </ul>
+        <p>The model was trained for 15 epochs using the Adam optimizer and CrossEntropyLoss, achieving:</p>
+        <ul>
+            <li>Top-1 Accuracy: 31.14%</li>
+            <li>Top-5 Accuracy: 59.72%</li>
+        </ul>
+        <img src="results/performance_custom_cnn.png" alt="Performance of Custom CNN">
+
+        <h3>Pretrained DenseNet121</h3>
+        <p>The DenseNet121 model was fine-tuned on the Food-101 dataset using transfer learning. Pretrained on ImageNet, the model’s convolutional layers were frozen, and the classifier was replaced with a linear layer to predict 101 classes.</p>
+        <ul>
+            <li><strong>Feature Layers:</strong> Retained from ImageNet to leverage pretrained knowledge.</li>
+            <li><strong>Classifier:</strong> Replaced with a fully connected layer suitable for the Food-101 dataset.</li>
+        </ul>
+        <p>The model was trained for 15 epochs with SGD and CrossEntropyLoss, achieving:</p>
+        <ul>
+            <li>Top-1 Accuracy: 57.77%</li>
+            <li>Top-5 Accuracy: 82.06%</li>
+        </ul>
+        <img src="results/performance_densenet.png" alt="Performance of DenseNet121">
+
+        <h3>Conditional GAN (cGAN)</h3>
+        <p>A Conditional GAN was implemented to generate synthetic images conditioned on class labels, enriching the training dataset. The architecture includes:</p>
+        <ul>
+            <li><strong>Generator:</strong> Combines noise vectors and class labels to produce realistic images. It uses ConvTranspose2d layers, batch normalization, and ReLU activations.</li>
+            <li><strong>Discriminator:</strong> Evaluates the authenticity of images by combining input images with class labels. It employs convolutional layers with LeakyReLU activations and outputs a probability score.</li>
+        </ul>
+        <p>The cGAN was trained iteratively, with alternating updates to the generator and discriminator. Below is the progression during training:</p>
+        <img src="results/progress_conditional_gan.png" alt="GAN Training Progress">
+        <p>Once trained, the cGAN generated realistic food images for all 101 classes, adding diversity to the dataset. 
+
+        <h3>DenseNet with Augmented Dataset</h3>
+        <p>The DenseNet121 model was retrained using a dataset augmented with GAN-generated images and additional transformations such as random rotations and horizontal flips. The goal was to examine the effect of synthetic data on performance.</p>
+        <p>While the augmented dataset introduced greater diversity, the GAN-generated images did not fully match the complexity of real-world images, leading to a slight drop in performance:</p>
+        <ul>
+            <li>Top-1 Accuracy: 55.62%</li>
+            <li>Top-5 Accuracy: 79.66%</li>
+        </ul>
+        <img src="results/performance_densenet_augmented.png" alt="Performance of DenseNet with Augmented Dataset">
+
+        <h2>Results Summary</h2>
+        <ul>
+            <li><strong>Custom CNN:</strong> Top-1 Accuracy: 31.14%, Top-5 Accuracy: 59.72%</li>
+            <li><strong>DenseNet121:</strong> Top-1 Accuracy: 57.77%, Top-5 Accuracy: 82.06%</li>
+            <li><strong>DenseNet with Augmentation:</strong> Top-1 Accuracy: 55.62%, Top-5 Accuracy: 79.66%</li>
+        </ul>
+
+        <h2>Conclusion</h2>
+        <p>The project highlights the strengths of transfer learning with pretrained models and the potential of GANs for data augmentation. While DenseNet121 achieved the best performance, future work can focus on improving GAN-generated images and fine-tuning the pretrained layers.</p>
+    </section>
+    <footer>
+        <p>&copy; 2024 Eric Kalinowski - Food Classification with Deep Learning</p>
+    </footer>
+</body>
+</html>
